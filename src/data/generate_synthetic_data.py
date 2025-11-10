@@ -60,6 +60,7 @@ cat_cols = {
         }
     }
 
+# remove caracteres especiais
 def remove_acentos(texto):
     if isinstance(texto, str):
         texto = unicodedata.normalize('NFKD', texto)
@@ -68,7 +69,7 @@ def remove_acentos(texto):
 
 # ---------------------------------------------------------------------------
 
-def generate_synthetic_data(num_rows=100):
+def generate_synthetic_data(num_rows=10000):
     """
     gera um dataset de clientes com dados fakes
     """
@@ -124,7 +125,7 @@ def generate_synthetic_data(num_rows=100):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Gera dados sintéticos.")
-    parser.add_argument("--rows", type=int, default=100, help="Número de linhas a gerar")
+    parser.add_argument("--rows", type=int, default=10000, help="Número de linhas a gerar")
     args = parser.parse_args()
 
     df = generate_synthetic_data(num_rows=args.rows)
