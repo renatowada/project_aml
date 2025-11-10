@@ -1,0 +1,6 @@
+# requirements.txt
+Faker
+random
+pandas
+networkx
+
