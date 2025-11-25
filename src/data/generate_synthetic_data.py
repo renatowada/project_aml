@@ -69,7 +69,7 @@ def remove_acentos(texto):
 
 # ---------------------------------------------------------------------------
 
-def generate_synthetic_data(num_rows=50000):
+def generate_synthetic_data(num_rows=100000):
     """
     gera um dataset de clientes com dados fakes
     """
@@ -139,20 +139,72 @@ def generate_synthetic_data(num_rows=50000):
 
     df = pd.DataFrame(data)
 
-    # pós processamento para que os receivers tambem sejam senders, mas senders não enviem para si mesmos
+    # ---------------------------------------------------------
+
     all_accounts = list(df['sender_id'].unique())
+    rng.shuffle(all_accounts) # Embaralha para não ser sequencial
 
-    new_receivers = []
-
-    for sender_id in df['sender_id']:
-        receiver = rng.choice(all_accounts)
-
-        while receiver == sender_id:
-            receiver = rng.choice(all_accounts)
-
-        new_receivers.append(receiver)
+    # Atribuir Papéis (Roles)
+    total_accs = len(all_accounts)
+    n_mules = int(total_accs * 0.05)   # 5% são Laranjas
+    n_bosses = int(total_accs * 0.01)  # 1% são Chefes/Destino Final
+    # O resto são usuários comuns (honestos)
     
+    mules_pool = all_accounts[:n_mules]
+    bosses_pool = all_accounts[n_mules : n_mules + n_bosses]
+    honest_pool = all_accounts[n_mules + n_bosses:]
+
+    print(f"Papéis definidos: {len(mules_pool)} Laranjas, {len(bosses_pool)} Chefes, {len(honest_pool)} Honestos.")
+
+    # Reescrever as transações para criar os padrões
+    # Vamos iterar pelo DataFrame e modificar sender, receiver e amount
+    # baseando-se em probabilidades para simular o comportamento.
+    
+    new_senders = []
+    new_receivers = []
+    new_amounts = []
+
+    for index, row in df.iterrows():
+        # Sorteio para decidir que tipo de transação é essa
+        # 70% = Transação Normal (Honesto -> Honesto)
+        # 20% = "Placement" (Honesto -> Laranja)
+        # 10% = "Layering/Integration" (Laranja -> Chefe) - Alto valor!
+        
+        scenario = rng.choices(
+            ['normal', 'fraud_entry', 'fraud_exit'], 
+            weights=[0.70, 0.20, 0.10], 
+            k=1
+        )[0]
+
+        if scenario == 'normal':
+            # Honesto -> (Ruído de fundo)
+            snd = rng.choice(honest_pool)
+            rcv = rng.choice(honest_pool)
+            while rcv == snd: rcv = rng.choice(honest_pool)
+            amt = row['transaction_amount'] # Mantém o valor original aleatório (geralmente baixo)
+
+        elif scenario == 'fraud_entry':
+            # Vítima/Honesto -> Laranja (Muitos envios)
+            snd = rng.choice(honest_pool)
+            rcv = rng.choice(mules_pool) # <--- AQUI o Laranja recebe
+            # Valores tendem a ser médios/quebrados
+            amt = round(rng.uniform(500, 5000), 2)
+
+        elif scenario == 'fraud_exit':
+            # Laranja -> Chefe (Poucos envios, valores altos)
+            snd = rng.choice(mules_pool) # <--- AQUI o Laranja vira Sender
+            rcv = rng.choice(bosses_pool)
+            # Valores altos (80% do volume financeiro concentrado aqui)
+            amt = round(rng.uniform(10000, 50000), 2)
+
+        new_senders.append(snd)
+        new_receivers.append(rcv)
+        new_amounts.append(amt)
+
+    # Atualizar o DataFrame
+    df['sender_id'] = new_senders
     df['receiver_id'] = new_receivers
+    df['transaction_amount'] = new_amounts
 
     return df[all_cols]
 
