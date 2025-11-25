@@ -139,6 +139,21 @@ def generate_synthetic_data(num_rows=50000):
 
     df = pd.DataFrame(data)
 
+    # pós processamento para que os receivers tambem sejam senders, mas senders não enviem para si mesmos
+    all_accounts = list(df['sender_id'].unique())
+
+    new_receivers = []
+
+    for sender_id in df['sender_id']:
+        receiver = rng.choice(all_accounts)
+
+        while receiver == sender_id:
+            receiver = rng.choice(all_accounts)
+
+        new_receivers.append(receiver)
+    
+    df['receiver_id'] = new_receivers
+
     return df[all_cols]
 
 if __name__ == '__main__':
