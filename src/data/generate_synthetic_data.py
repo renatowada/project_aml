@@ -9,6 +9,8 @@ import os
 
 import unicodedata
 
+from datetime import datetime, timedelta
+
 my_cols = [
     'name',
     'cpf',
@@ -156,6 +158,15 @@ def generate_synthetic_data(num_rows=100000):
 
     print(f"Papéis definidos: {len(mules_pool)} Laranjas, {len(bosses_pool)} Chefes, {len(honest_pool)} Honestos.")
 
+    today = datetime.now()
+    cutoff_date = today - timedelta(days=10)
+
+    fraud_entry_start_global = today - timedelta(days=60)
+    fraud_entry_end_global = cutoff_date - timedelta(days=1)
+
+    fraud_exit_start_global = cutoff_date
+    fraud_exit_end_global = today
+
     # Reescrever as transações para criar os padrões
     # Vamos iterar pelo DataFrame e modificar sender, receiver e amount
     # baseando-se em probabilidades para simular o comportamento.
@@ -163,8 +174,15 @@ def generate_synthetic_data(num_rows=100000):
     new_senders = []
     new_receivers = []
     new_amounts = []
+    new_dates = []
+
+    
+
 
     for index, row in df.iterrows():
+
+        acc_created = pd.to_datetime(row['acc_creation_date'])
+
         # Sorteio para decidir que tipo de transação é essa
         # 70% = Transação Normal (Honesto -> Honesto)
         # 20% = "Placement" (Honesto -> Laranja)
@@ -176,35 +194,51 @@ def generate_synthetic_data(num_rows=100000):
             k=1
         )[0]
 
-        if scenario == 'normal':
-            # Honesto -> (Ruído de fundo)
-            snd = rng.choice(honest_pool)
-            rcv = rng.choice(honest_pool)
-            while rcv == snd: rcv = rng.choice(honest_pool)
-            amt = row['transaction_amount'] # Mantém o valor original aleatório (geralmente baixo)
+        final_snd = None
+        final_rcv = None
+        final_amt = 0
+        final_date = None
 
-        elif scenario == 'fraud_entry':
+        if scenario == 'fraud_entry':
             # Vítima/Honesto -> Laranja (Muitos envios)
-            snd = rng.choice(honest_pool)
-            rcv = rng.choice(mules_pool) # <--- AQUI o Laranja recebe
-            # Valores tendem a ser médios/quebrados
-            amt = round(rng.uniform(500, 5000), 2)
+            if acc_created < fraud_entry_end_global:
+                final_snd = rng.choice(honest_pool)
+                final_rcv = rng.choice(mules_pool)# <--- AQUI o Laranja recebe
+                final_amt = round(rng.uniform(500, 5000), 2) # Valores tendem a ser médios/quebrados
 
-        elif scenario == 'fraud_exit':
-            # Laranja -> Chefe (Poucos envios, valores altos)
-            snd = rng.choice(mules_pool) # <--- AQUI o Laranja vira Sender
-            rcv = rng.choice(bosses_pool)
-            # Valores altos (80% do volume financeiro concentrado aqui)
-            amt = round(rng.uniform(10000, 50000), 2)
+                valid_start = max(fraud_entry_start_global, acc_created)
+                final_date = fake.date_time_between(start_date=valid_start, end_date=fraud_entry_end_global)
+            else:
+                scenario = 'normal'
 
-        new_senders.append(snd)
-        new_receivers.append(rcv)
-        new_amounts.append(amt)
+        if scenario == 'fraud_exit':
+            if acc_created < fraud_exit_end_global:
+                final_snd = rng.choice(mules_pool)
+                final_rcv = rng.choice(bosses_pool)
+                final_amt = round(rng.uniform(10000, 50000), 2)
+                
+                valid_start = max(fraud_exit_start_global, acc_created)
+                final_date = fake.date_time_between(start_date=valid_start, end_date=fraud_exit_end_global)
+            else:
+                scenario = 'normal'
+
+        if scenario == 'normal':
+            final_snd = rng.choice(honest_pool)
+            final_rcv = rng.choice(honest_pool)
+            while final_rcv == final_snd: final_rcv = rng.choice(honest_pool)
+            final_amt = row['transaction_amount']
+            final_date = row['transaction_time']
+
+        new_senders.append(final_snd)
+        new_receivers.append(final_rcv)
+        new_amounts.append(final_amt)
+        new_dates.append(final_date)
 
     # Atualizar o DataFrame
     df['sender_id'] = new_senders
     df['receiver_id'] = new_receivers
     df['transaction_amount'] = new_amounts
+    df['transaction_time'] = new_dates
 
     return df[all_cols]
 
