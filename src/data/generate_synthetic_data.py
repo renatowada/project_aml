@@ -292,33 +292,58 @@ def generate_synthetic_data(num_rows=100000):
             
             data.append(row)
 
+    labels_data = []
+
+    for acc_id in all_account_ids:
+        label = 0 # Honesto
+        role = 'Honest'
+    
+        if acc_id in mules_pool:
+            label = 1
+            role = 'Mule'
+        elif acc_id in bosses_pool:
+            label = 1
+            role = 'Boss'
+        
+        labels_data.append({
+            'account_id': acc_id,
+            'is_fraud': label,
+            'role': role
+        })
+
+    df_labels = pd.DataFrame(labels_data)
+
     df = pd.DataFrame(data)
     
     cols_order = ['transaction_id', 'transaction_time', 'transaction_amount', 
                   'sender_id', 'name', 'cpf', 'receiver_id', 'receiver_name'] + \
                  [c for c in df.columns if c not in ['transaction_id', 'transaction_time', 'transaction_amount', 'sender_id', 'name', 'cpf', 'receiver_id', 'receiver_name']]
     
-    return df[cols_order]
+    return df[cols_order], df_labels
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Gera dados sintéticos.")
-    parser.add_argument("--rows", type=int, default=10000, help="Número de linhas a gerar")
+    parser.add_argument("--rows", type=int, default=100000, help="Número de linhas a gerar")
     args = parser.parse_args()
 
-    df = generate_synthetic_data(num_rows=args.rows)
+    df_transactions, df_labels = generate_synthetic_data(num_rows=args.rows)
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     src_dir = os.path.dirname(script_dir)
     project_root = os.path.dirname(src_dir)
-    output_path = os.path.join(project_root, 'data', '01_raw', 'synthetic_dataset.csv')
+
+    output_path_data = os.path.join(project_root, 'data', '01_raw', 'synthetic_dataset.csv')
+    output_path_labels = os.path.join(project_root, 'data', '01_raw', 'accounts_labels.csv')
     
-    output_dir = os.path.dirname(output_path)
+    output_dir = os.path.dirname(output_path_data)
     os.makedirs(output_dir, exist_ok=True)
 
-    df.to_csv(output_path, index=False)
+    df_transactions.to_csv(output_path_data, index=False)
+    print(f"Dataset salvo em {output_path_data}")
 
-    print(f"Dataset salvo em {output_path}")
+    df_labels.to_csv(output_path_labels, index=False)
+    print(f"Gabarito salvo em {output_path_labels}")
 
 
 
