@@ -141,7 +141,7 @@ def generate_synthetic_data(num_rows=100000):
     for i in range(num_rows):
         
         # 1. Escolher Cenário
-        scenario = rng.choices(['normal', 'fraud_cycle'], weights=[0.85, 0.15], k=1)[0]
+        scenario = rng.choices(['normal', 'fraud_cycle'], weights=[0.80, 0.20], k=1)[0]
         
         rows_to_add = [] # Lista temporária para guardar as linhas deste ciclo
 
@@ -155,8 +155,13 @@ def generate_synthetic_data(num_rows=100000):
             while receiver_id == sender_id: receiver_id = rng.choice(honest_pool)
             
             trans_date = fake.date_time_between(start_date='-60d', end_date="now")
-            amount = round(rng.uniform(50, 2000), 2)
-            trans_type = 'pix'
+
+            if rng.random() < 0.95:
+                amount = round(rng.uniform(10, 3000), 2)
+            else:
+                amount = round(rng.uniform(5000, 40000), 2)
+
+            trans_type = rng.choices(['pix', 'ted', 'boleto'], weights=[0.7, 0.2, 0.1])[0]
 
             sender_profile = accounts_db[sender_id]
             receiver_profile = accounts_db[receiver_id]
@@ -198,15 +203,16 @@ def generate_synthetic_data(num_rows=100000):
             mule = rng.choice(mules_pool)           # Laranja
             boss = rng.choice(bosses_pool)          # Chefe
 
-            # Honesto -> Laranja
-            sender_id = sender_honest
-            receiver_id = mule
-            
-            sender_profile = accounts_db[sender_id]
-            receiver_profile = accounts_db[receiver_id]
+            if rng.random() < 0.30:
+                base_amount = round(rng.uniform(100, 2500), 2)
+            else:
+                base_amount = round(rng.uniform(3000, 20000), 2)
 
-            base_amount = round(rng.uniform(2000, 15000), 2)
-            entry_date = fake.date_time_between(start_date='-30d', end_date="-2d")
+            
+            sender_profile = accounts_db[sender_honest]
+            receiver_profile = accounts_db[mule]
+
+            entry_date = fake.date_time_between(start_date='-30d', end_date="-5d")
 
             row_in = {
                 'transaction_id': i,
@@ -238,20 +244,26 @@ def generate_synthetic_data(num_rows=100000):
             }
             rows_to_add.append(row_in)
 
+            if rng.random() < 0.70:
+                delay = timedelta(hours=rng.randint(1, 12), minutes=rng.randint(0, 59))
+            else:
+                delay = timedelta(days=rng.randint(2, 4), hours=rng.randint(0, 5))
+            
+            exit_date = entry_date + delay
+
+
             # Laranja -> Chefe
             sender_id_out = mule
             receiver_id_out = boss
-            
-            sender_profile_out = accounts_db[sender_id_out]
-            receiver_profile_out = accounts_db[receiver_id_out]
-
-            # Transfere rapidamente para outra conta (de 1 a 6 horas)
-            delay = timedelta(hours=rng.randint(1, 6), minutes=rng.randint(0, 59))
-            exit_date = entry_date + delay
 
             # O Laranja fica com uma comissão
-            fee_percent = rng.uniform(0.02, 0.05)
+            fee_percent = rng.uniform(0.01, 0.08)
             exit_amount = round(base_amount * (1 - fee_percent), 2)
+
+            sender_id_out = mule
+            receiver_id_out = boss
+            sender_profile_out = accounts_db[sender_id_out]
+            receiver_profile_out = accounts_db[receiver_id_out]
 
             row_out = {
                 'transaction_id': i + 1000000, # ID offset
