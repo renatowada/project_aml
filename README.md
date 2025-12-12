@@ -68,7 +68,7 @@ O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação AUC ( o m
 
 - **Priorização Inteligente**: O modelo gera um Risk Score (Probabilidade). Isso permite que a equipe de fraude foque primeiro nos casos críticos (Score > 0.90) antes que o dinheiro saia do banco.
 
-[Exemplo de Probabilidade de Risco](assets/risk_score.PNG)
+![Exemplo de Probabilidade de Risco](assets/risk_score.PNG)
 
 
 # :memo: Nota Sobre A Performance Do Modelo  
@@ -79,11 +79,11 @@ Por que este resultado é válido? O sucesso do modelo valida que ele foi capaz 
 
 # :chart_with_upwards_trend: Dashboard Interativo (Power BI)  
 
-1. [KPIs](assets/pbi1.PNG)
+1. ![KPIs](assets/pbi1.PNG)
 
-2. [Análise de Padrões](assets/pbi2.PNG)
+2. ![Análise de Padrões](assets/pbi2.PNG)
 
-3. [Performance do Modelo](assets/pbi3.PNG)
+3. ![Performance do Modelo](assets/pbi3.PNG)
 
 # :rocket: Como executar
 
