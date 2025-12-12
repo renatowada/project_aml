@@ -14,9 +14,9 @@ O objetivo final não é apenas classificar fraudes, mas reduzir o custo operaci
 # :briefcase: O Problema de Negócio
 A lavagem de dinheiro custa trilhões à economia global. Bancos enfrentam dois grandes desafios:
 
-1. Multas Regulatórias: Falhar em detectar grandes esquemas.
+1. **Multas Regulatórias**: Falhar em detectar grandes esquemas.
 
-2. Fricção com o Cliente: Bloquear contas honestas por engano (Falsos Positivos).
+2. **Fricção com o Cliente**: Bloquear contas honestas por engano (Falsos Positivos).
 
 **Solução Proposta**: Utilizar **Teoria dos Grafos** para mapear relacionamentos entre contas e **Machine Learning** para identificar padrões comportamentais de laranjas, superando a eficácia de regras estáticas tradicionais.
 
