@@ -55,9 +55,9 @@ Utilizei o **NetworkX** para transformar tabelas de transações em um Grafo Dir
 
 Utilizei uma abordagem *Challenger vs. Champion* para selecionar o melhor modelo, lidando com o desbalanceamento de classes (fraudes são raras).
 
-![Tabela de Comparação Entre Modelos](assets/model_metrics.png)
+![Tabela de Comparação Entre Modelos](assets/model_metrics.PNG)
 
-O modelo escolhido foi o XGBoost, pois possui a melhor pontuação AUC ( o modelo realmente aprendeu e não está chutando),  a  melhor sensibilidade (apenas 8% dos laranjas escapam da detecção) e a melhor precisão (apenas 2% são  falsos positivos). Fatores que compensam consideravelmente, uma vez que o custo do falso positivo (risco reputacional) é elevado.
+O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação AUC ( o modelo realmente aprendeu e não está chutando),  a  melhor sensibilidade (apenas 8% dos laranjas escapam da detecção) e a melhor precisão (apenas 2% são  falsos positivos). Fatores que compensam consideravelmente, uma vez que o custo do falso positivo (risco reputacional) é elevado.
 
 # :money_bag: Resultados e Impacto Estratégico
 
@@ -66,6 +66,8 @@ O modelo escolhido foi o XGBoost, pois possui a melhor pontuação AUC ( o model
 - **Eficiência Operacional**: Apenas 2% dos alertas gerados são alarmes  falsos. Esse modelo economiza centenas de horas de analistas humanos revisando contas honestas.  
 
 - **Priorização Inteligente**: O modelo gera um Risk Score (Probabilidade). Isso permite que a equipe de fraude foque primeiro nos casos críticos (Score > 0.90) antes que o dinheiro saia do banco.
+
+[Exemplo de Probabilidade de Risco](assets/risk_score.PNG)
 
 
 # :memo: Nota Sobre A Performance Do Modelo  
