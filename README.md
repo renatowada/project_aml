@@ -59,7 +59,7 @@ Utilizei uma abordagem *Challenger vs. Champion* para selecionar o melhor modelo
 
 O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação AUC ( o modelo realmente aprendeu e não está chutando),  a  melhor sensibilidade (apenas 8% dos laranjas escapam da detecção) e a melhor precisão (apenas 2% são  falsos positivos). Fatores que compensam consideravelmente, uma vez que o custo do falso positivo (risco reputacional) é elevado.
 
-# :money_bag: Resultados e Impacto Estratégico
+# :moneybag: Resultados e Impacto Estratégico
 
 - **Blindagem Regulatória**: O modelo detectou 92% de todas as movimentações ilícitas. Isso reduz drasticamente o risco de multas do Banco Central por falha de compliance.
 
