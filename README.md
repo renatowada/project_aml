@@ -79,11 +79,17 @@ Por que este resultado é válido? O sucesso do modelo valida que ele foi capaz 
 
 # :chart_with_upwards_trend: Dashboard Interativo (Power BI)  
 
-1. ![KPIs](assets/pbi1.PNG)
+1. ![KPIs](assets/dashboard_kpi.PNG)
 
-2. ![Análise de Padrões](assets/pbi2.PNG)
+2. ![Gráfico de Dispersão](assets/scatter_plot.PNG)
 
-3. ![Performance do Modelo](assets/pbi3.PNG)
+3. ![In e Out-Degree](assets/bar_chart_class.PNG)
+
+4. ![Performance dos Modelos](assets/bar_chart_models.PNG)
+
+5. ![Métricas dos Modelos](assets/model_metrics.PNG)
+
+6. ![Matriz de Confusão (XGBoost)](assets/fraud_matrix.PNG)
 
 # :rocket: Como executar
 
