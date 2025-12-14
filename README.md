@@ -79,9 +79,9 @@ Por que este resultado é válido? O sucesso do modelo valida que ele foi capaz 
 
 # :chart_with_upwards_trend: Dashboard Interativo (Power BI)  
 
-1. ![KPIs](assets/dashboard_kpi.PNG)
+1. ![KPIs](assets/dashboard_kpi.png)
 
-2. ![Gráfico de Dispersão](assets/scatter_plot.PNG)
+2. ![Gráfico de Dispersão](assets/scatter_plot.png)
 
 3. ![In e Out-Degree](assets/bar_chart_class.PNG)
 
