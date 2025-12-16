@@ -58,7 +58,14 @@ Utilizei uma abordagem *Challenger vs. Champion* para selecionar o melhor modelo
 
 ![Tabela de Comparação Entre Modelos](assets/model_metrics.PNG)
 
-O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação AUC ( o modelo realmente aprendeu e não está chutando),  a  melhor sensibilidade (apenas 8% dos laranjas escapam da detecção) e a melhor precisão (apenas 2% são  falsos positivos). Fatores que compensam consideravelmente, uma vez que o custo do falso positivo (risco reputacional) é elevado.
+O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação **AUC** ( o modelo realmente aprendeu e não está chutando),  a  melhor **sensibilidade** (apenas 8% dos laranjas escapam da detecção) e a melhor **precisão** (apenas 2% são  falsos positivos). Fatores que compensam consideravelmente, uma vez que o custo do falso positivo (risco reputacional) é elevado.
+
+# :memo: Nota Sobre A Performance Do Modelo  
+
+As métricas AUC e Recall obtidas são excepcionalmente altas devido à natureza sintética dos dados. Em um cenário real, fraudadores adapatam seus comportamentos para se misturarem aos usuários legítimos; muitas outras informações (das quais não tenho conhecimento) são utilizadas no treinamento do modelo; e a *profundeza* do problema seria maior (ex: uma conta laranja envia dinheiro para uma conta laranja secundária que então envia para a conta final/chefe) o que reduziria essas métricas.  
+
+Por que este resultado é válido? O sucesso do modelo valida que ele foi capaz de aprender os padrões matemáticos de fraude (Smurfing, Ciclos Fechados, Evasão Rápida) que inseri no dataset através do script gerador. O projeto serve como Prova de Conceito (PoC) da eficácia de algoritmos baseados em árvores (XGBoost) para detectar anomalias transacionais, mesmo que em dados reais a "zona cinzenta" fosse mais ruidosa.
+
 
 # :moneybag: Resultados e Impacto Estratégico
 
@@ -70,12 +77,6 @@ O modelo escolhido foi o **XGBoost**, pois possui a melhor pontuação AUC ( o m
 
 ![Exemplo de Probabilidade de Risco](assets/risk_score.PNG)
 
-
-# :memo: Nota Sobre A Performance Do Modelo  
-
-As métricas AUC e Recall obtidas são excepcionalmente altas devido à natureza sintética dos dados. Em um cenário real, fraudadores adapatam seus comportamentos para se misturarem aos usuários legítimos; muitas outras informações (das quais não tenho conhecimento) são utilizadas no treinamento do modelo; e a *profundeza* do problema seria maior (ex: uma conta laranja envia dinheiro para uma conta laranja secundária que então envia para a conta final/chefe) o que reduziria essas métricas.  
-
-Por que este resultado é válido? O sucesso do modelo valida que ele foi capaz de aprender os padrões matemáticos de fraude (Smurfing, Ciclos Fechados, Evasão Rápida) que inseri no dataset através do script gerador. O projeto serve como Prova de Conceito (PoC) da eficácia de algoritmos baseados em árvores (XGBoost) para detectar anomalias transacionais, mesmo que em dados reais a "zona cinzenta" fosse mais ruidosa.
 
 # :chart_with_upwards_trend: Dashboard Interativo (Power BI)  
 
@@ -100,9 +101,9 @@ git clone https://github.com/renatowada/project_aml.git
 pip install -r requirements.txt  
 
 3. Gere os dados (opcional, pois o .csv já está na pasta)
-python src/generate_synthetic_data.py  
+python src/data/generate_synthetic_data.py  
 
-4. Execute o notebook de modelagem notebooks/modeling.ipynb
+4. Execute os notebooks na ordem eda -> modeling -> dashboard
 
 
 ----------------------------------------------------------
